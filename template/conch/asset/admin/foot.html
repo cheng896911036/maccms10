@@ -1,0 +1,141 @@
+<script type="text/javascript" src="__STATIC__/js/admin_common.js"></script>
+<script type="text/javascript">
+
+    layui.config({
+        base: '../../../template/conch/asset/js/parts/',
+    })
+    layui.use(['form','upload','layer','element','multiSelect','colorpicker'], function(){
+        var form = layui.form,
+            layer = layui.layer,
+            upload = layui.upload,
+            element = layui.element,
+            multiSelect = layui.multiSelect,
+            colorpicker = layui.colorpicker;
+        form.on('select(share-api)', function(data){
+            if(data.value=='1'){
+                $('.sina-filer').show();
+                $('.baidu-filer').hide();
+            }else{
+                $('.baidu-filer').show();
+                $('.sina-filer').hide();
+            }
+        });
+        form.on('select(vod-style)',function(data){
+            $(this).parents('.layui-form-item').next('.vod-style-filer').hide();
+            $(this).parents('.layui-form-item').next().next('.vod-style-big').show();
+            if(data.value=='c'){
+                $(this).parents('.layui-form-item').next('.vod-style-filer').show();
+                $(this).parents('.layui-form-item').next().next('.vod-style-big').hide();
+            }
+        });
+        form.on('switch(switchConch)', function(data){
+            if(this.checked){
+                $(this).attr("value","1");
+                $(this).parents('.layui-form-item').next('.switchConch-filer').show();
+            }else{
+                $(this).attr("value","0");
+                $(this).parents('.layui-form-item').next('.switchConch-filer').hide();
+            }
+        });
+        form.on('checkbox(navs)', function(data){
+            var nav = $(".conch-navs:checked").length;
+            if(nav>5){
+                layer.msg("底部只能选择5个")
+                $(this)[0].checked=false;
+                form.render();
+                return false;
+            }
+        });
+        form.on('checkbox(navtop-pc)', function(data){
+            var items = $(".conch-navtop-pc:checked").length;
+            if(items>5){
+                layer.msg("PC端只能选择5个")
+                $(this)[0].checked=false;
+                form.render();
+                return false;
+            }
+        }); 
+        form.on('checkbox(navtop-mob)', function(data){
+            var items = $(".conch-navtop-mob:checked").length;
+            if(items>2){
+                layer.msg("移动端只能选择2个")
+                $(this)[0].checked=false;
+                form.render();
+                return false;
+            }
+        });      
+        upload.render({
+            elem: '.layui-upload'
+            ,url: conchadm.upload
+            ,method: 'post'
+            ,before: function(input) {
+                layer.msg('文件上传中...', {time:3000000});
+            },done: function(res, index, upload) {
+                var obj = this.item;
+                if (res.code == 0) {
+                    layer.msg(res.msg);
+                    return false;
+                }
+                layer.closeAll();
+                var input = $(obj).parent().parent().find('.upload-input');
+                if ($(obj).attr('lay-type') == 'image') {
+                    input.siblings('img').attr('src', res.data.file).show();
+                }
+                input.val(res.data.file);
+
+                if(res.data.thumb_class !=''){
+                    $('.'+ res.data.thumb_class).val(res.data.thumb[0].file);
+                }
+            }
+        });
+        colorpicker.render({
+            elem: '#conch-form'
+            ,color: conchadm.site
+            ,done: function(color){
+              $('#conch-form-input').val(color);
+              $('#conch-form-input').attr("value",color);
+            }
+        });
+        colorpicker.render({
+            elem: '#conch-form2'
+            ,color: conchadm.subs
+            ,done: function(color){
+              $('#conch-form2-input').val(color);
+              $('#conch-form2-input').attr("value",color);
+            }
+        });
+        $('.conch-item').each(function(){
+            if ($(this).length) {
+                var $this = $(this);
+                var $on = $this.find('.layui-form-select');
+                $on.find('dd').click(function() {
+                    var item = $on.find('dd input:checked').length;
+                    if(item>0){
+                        var vals = [];
+                        var sele = $this.find('select[multiple] option:selected');
+                        sele.each(function() {
+                            vals.push($(this).val());
+                            $(this).parents('select').prev('input').attr("value",vals);
+                            $(this).parents('.layui-form-item').next('.vod-nums-filer').show();
+                        });
+                    }else{
+                       $(this).parents('.layui-form-select').prev('select').prev('input').attr("value",""); 
+                       $(this).parents('.layui-form-item').next('.vod-nums-filer').hide();
+                    }
+                });
+            }
+        });
+        $('.upload-input').hover(function (e){
+            var e = window.event || e;
+            var imgsrc = $(this).val();
+            if(imgsrc.trim()==""){ return; }
+            var left = e.clientX+document.body.scrollLeft+20;
+            var top = e.clientY+document.body.scrollTop+20;
+            $(".conch-showpic").css({left:left,top:top,display:""});
+            if(imgsrc.indexOf('://')<0){ imgsrc = ROOT_PATH + '/' + imgsrc;	} else{ imgsrc = imgsrc.replace('mac:','http:'); }
+            $(".conch-showpic-img").attr("src", imgsrc);
+        },function (e){
+            $(".conch-showpic").css("display","none");
+        });
+    });
+</script>
