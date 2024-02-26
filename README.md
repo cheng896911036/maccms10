@@ -8,3 +8,20 @@ Apple CMS program is a set of PHP and MYSQL environment operating in a perfect a
 本程序仅供内部学习和交流使用，没有内置任何数据，请在遵守当地法律的前提下使用本站程序，对用户在使用过程中的自行维护的信息内容本站不负任何责任！
 
 This program is for internal learning and communication use only, there is no built-in data, please comply with local laws under the premise of using the site program, the user in the process of self-maintenance of the information content of this site is not responsible!
+maccms10-tvbox-api
+TVBOX默认可以对接苹果CMS v10的接口，但是不支持过滤。 这个项目用来增加一个支持过滤的tvbox接口。
+
+安装方法
+下载Tvbox.php，上传到maccms10/application/api/controller/目录
+
+浏览器地址栏访问：http://<maccms10地址>/api.php/tvbox 如果显示出json数据就表示安装成功。然后在TVBOX里面配置相应的接口即可。
+
+主要功能：
+
+只示一级分类
+在分类上按遥控器OK键，弹出过滤窗口，添加了各种过滤功能
+不过滤时可以设置默认过滤条件，在苹果CMS后台系统->网站参数->预留参数->自定义参数填写：
+tvbox_default_year$$$2023
+tvbox_default_area$$$中国
+过滤功能展示
+屏幕截图
